@@ -1,0 +1,422 @@
+if not game.IsLoaded then
+    game.Loaded:Wait()
+end
+
+-- Check if in correct game
+if not (game.PlaceId == 11520107397 or game.PlaceId == 9015014224 or game.PlaceId == 6403373529 or game.PlaceId == 124596094333302) then
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Wrong Game",
+        Text = "This script only works in Slap Battles",
+        Duration = 5
+    })
+    return
+end
+
+-- Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "Alchemist Fucker",
+    LoadingTitle = "Alchemist GUI",
+    LoadingSubtitle = "by SquidmanIII",
+    ConfigurationSaving = {
+        Enabled = false
+    }
+})
+
+-- Potion Recipes
+local PotionRecipes = {
+    ["Grug"] = {
+        {"Mushroom", "add"},
+        {"Mushroom", "mix"}
+    },
+    ["Nightmare"] = {
+        {"Dark Root", "add"},
+        {"Dark Root", "mix"},
+        {"Dark Root", "mix"},
+        {"Dark Root", "mix"}
+    },
+    ["Confusion"] = {
+        {"Red Crystal", "add"},
+        {"Blue Crystal", "add"},
+        {"Glowing Mushroom", "add"},
+        {"Red Crystal", "mix"},
+        {"Blue Crystal", "mix"},
+        {"Glowing Mushroom", "mix"}
+    },
+    ["Power"] = {
+        {"Red Crystal", "add"},
+        {"Dire Flower", "add"},
+        {"Wild Vine", "add"},
+        {"Red Crystal", "mix"},
+        {"Dire Flower", "mix"},
+        {"Wild Vine", "mix"}
+    },
+    ["Paralyzing"] = {
+        {"Plane Flower", "add"},
+        {"Plane Flower", "mix"},
+        {"Plane Flower", "mix"}
+    },
+    ["Haste"] = {
+        {"Autumn Sprout", "add"},
+        {"Jade Stone", "add"},
+        {"Autumn Sprout", "mix"},
+        {"Jade Stone", "mix"}
+    },
+    ["Invisibility"] = {
+        {"Hazel Lily", "add"},
+        {"Blue Crystal", "add"},
+        {"Hazel Lily", "mix"},
+        {"Hazel Lily", "mix"},
+        {"Blue Crystal", "mix"}
+    },
+    ["Explosion"] = {
+        {"Red Crystal", "add"},
+        {"Fire Flower", "add"},
+        {"Fire Flower", "mix"},
+        {"Fire Flower", "mix"},
+        {"Red Crystal", "mix"}
+    },
+    ["Invincible"] = {
+        {"Elder Wood", "add"},
+        {"Mushroom", "add"},
+        {"Mushroom", "mix"},
+        {"Mushroom", "mix"},
+        {"Elder Wood", "mix"}
+    },
+    ["Toxic"] = {
+        {"Dark Root", "add"},
+        {"Blood Rose", "add"},
+        {"Red Crystal", "add"},
+        {"Red Crystal", "mix"},
+        {"Blood Rose", "mix"},
+        {"Dark Root", "mix"},
+        {"Dark Root", "mix"}
+    },
+    ["Freeze"] = {
+        {"Winter Rose", "add"},
+        {"Wild Vine", "add"},
+        {"Blue Crystal", "add"},
+        {"Glowing Mushroom", "add"},
+        {"Wild Vine", "mix"},
+        {"Blue Crystal", "mix"},
+        {"Glowing Mushroom", "mix"},
+        {"Winter Rose", "mix"},
+        {"Winter Rose", "mix"}
+    },
+    ["Feather"] = {
+        {"Mushroom", "add"},
+        {"Hazel Lily", "add"},
+        {"Hazel Lily", "mix"},
+        {"Mushroom", "mix"}
+    },
+    ["Speed"] = {
+        {"Mushroom", "add"},
+        {"Hazel Lily", "add"},
+        {"Plane Flower", "add"},
+        {"Blue Crystal", "add"},
+        {"Hazel Lily", "mix"},
+        {"Blue Crystal", "mix"},
+        {"Plane Flower", "mix"},
+        {"Mushroom", "mix"},
+        {"Mushroom", "mix"}
+    },
+    ["Lethal"] = {
+        {"Blood Rose", "add"},
+        {"Blood Rose", "add"},
+        {"Dark Root", "add"},
+        {"Dark Root", "add"},
+        {"Blood Rose", "mix"}, {"Blood Rose", "mix"}, {"Blood Rose", "mix"}, {"Blood Rose", "mix"}, {"Blood Rose", "mix"},
+        {"Blood Rose", "mix"}, {"Blood Rose", "mix"}, {"Blood Rose", "mix"}, {"Blood Rose", "mix"}, {"Blood Rose", "mix"},
+        {"Dark Root", "mix"}, {"Dark Root", "mix"}, {"Dark Root", "mix"}, {"Dark Root", "mix"}, {"Dark Root", "mix"},
+        {"Dark Root", "mix"}, {"Dark Root", "mix"}, {"Dark Root", "mix"}, {"Dark Root", "mix"}, {"Dark Root", "mix"}
+    },
+    ["Slow"] = {
+        {"Mushroom", "add"},
+        {"Blue Crystal", "add"},
+        {"Jade Stone", "add"},
+        {"Plane Flower", "add"},
+        {"Mushroom", "mix"}, {"Mushroom", "mix"},
+        {"Blue Crystal", "mix"}, {"Blue Crystal", "mix"},
+        {"Jade Stone", "mix"},
+        {"Plane Flower", "mix"}
+    },
+    ["Antitoxin"] = {
+        {"Blue Crystal", "add"},
+        {"Glowing Mushroom", "add"},
+        {"Elder Wood", "add"},
+        {"Plane Flower", "add"},
+        {"Plane Flower", "mix"}, {"Plane Flower", "mix"},
+        {"Elder Wood", "mix"},
+        {"Glowing Mushroom", "mix"},
+        {"Blue Crystal", "mix"}
+    },
+    ["Corrupted Vine"] = {
+        {"Wild Vine", "add"},
+        {"Blood Rose", "add"},
+        {"Dark Root", "add"},
+        {"Elder Wood", "add"},
+        {"Jade Stone", "add"},
+        {"Wild Vine", "mix"}, {"Wild Vine", "mix"}, {"Wild Vine", "mix"},
+        {"Blood Rose", "mix"},
+        {"Dark Root", "mix"},
+        {"Elder Wood", "mix"},
+        {"Jade Stone", "mix"}
+    },
+    ["Field"] = {
+        {"Hazel Lily", "add"},
+        {"Plane Flower", "add"},
+        {"Hazel Lily", "mix"},
+        {"Plane Flower", "mix"},
+        {"Plane Flower", "mix"}
+    },
+    ["Lost"] = {
+        {"Blue Crystal", "add"},
+        {"Elder Wood", "add"},
+        {"Red Crystal", "add"},
+        {"Elder Wood", "mix"}, {"Elder Wood", "mix"}, {"Elder Wood", "mix"},
+        {"Red Crystal", "mix"},
+        {"Blue Crystal", "mix"}
+    }
+}
+
+-- All ingredients list
+local AllIngredients = {
+    "Mushroom", "Dark Root", "Red Crystal", "Blue Crystal", "Glowing Mushroom",
+    "Dire Flower", "Wild Vine", "Plane Flower", "Autumn Sprout", "Jade Stone",
+    "Hazel Lily", "Fire Flower", "Elder Wood", "Blood Rose", "Winter Rose"
+}
+
+-- Variables
+local SelectedPotion = "Grug"
+local BrewAmount = 1
+local SpamIngredients = false
+
+-- Function to brew potion
+local function BrewPotion(potionName, amount)
+    if game.Players.LocalPlayer.leaderstats.Glove.Value ~= "Alchemist" then
+        Rayfield:Notify({
+            Title = "Error",
+            Content = "You don't have the Alchemist glove equipped!",
+            Duration = 5
+        })
+        return
+    end
+    
+    if not game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name.."'s Cauldron") then
+        game:GetService("ReplicatedStorage").GeneralAbility:FireServer()
+        task.wait(0.5)
+    end
+    
+    local recipe = PotionRecipes[potionName]
+    if not recipe then return end
+    
+    for i = 1, amount do
+        for _, step in ipairs(recipe) do
+            local ingredient, action = step[1], step[2]
+            
+            if action == "add" then
+                game:GetService("ReplicatedStorage").AlchemistEvent:FireServer("AddItem", ingredient)
+            elseif action == "mix" then
+                game:GetService("ReplicatedStorage").AlchemistEvent:FireServer("MixItem", ingredient)
+            end
+        end
+        
+        game:GetService("ReplicatedStorage").AlchemistEvent:FireServer("BrewPotion")
+        task.wait(0.02)
+    end
+    
+    Rayfield:Notify({
+        Title = "Success",
+        Content = "Brewed " .. amount .. "x " .. potionName .. " Potion!",
+        Duration = 3
+    })
+end
+
+-- Function to spam ingredients
+local function SpamIngredientsLoop()
+    while SpamIngredients do
+        for _, ingredient in ipairs(AllIngredients) do
+            if not SpamIngredients then break end
+            game:GetService("ReplicatedStorage").AlchemistEvent:FireServer("AddItem", ingredient)
+        end
+        task.wait()
+    end
+end
+
+-- Function to get water
+local function AutoWater()
+    if game.Players.LocalPlayer.leaderstats.Glove.Value ~= "Alchemist" then
+        Rayfield:Notify({
+            Title = "Error",
+            Content = "You don't have the Alchemist glove equipped!",
+            Duration = 5
+        })
+        return
+    end
+
+    Rayfield:Notify({
+        Title = "Getting water",
+        Content = "Getting you wet...",
+        Duration = 3
+    })
+
+    if not game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name.."'s Cauldron") then
+        game:GetService("ReplicatedStorage").GeneralAbility:FireServer()
+        task.wait(0.5)
+    end
+
+    local args = {[1] = "BrewPotion"}
+
+    -- Brew each potion
+    local potionOrder = {
+        "Grug", "Nightmare", "Confusion", "Power", "Paralyzing", "Haste", 
+        "Invisibility", "Explosion", "Invincible", "Toxic", "Freeze", "Feather", 
+        "Speed", "Lethal", "Slow", "Antitoxin", "Corrupted Vine", "Field", "Lost"
+    }
+
+    for _, potionName in ipairs(potionOrder) do
+        local recipe = PotionRecipes[potionName]
+        if recipe then
+            for _, step in ipairs(recipe) do
+                local ingredient, action = step[1], step[2]
+                
+                if action == "add" then
+                    game:GetService("ReplicatedStorage").AlchemistEvent:FireServer("AddItem", ingredient)
+                elseif action == "mix" then
+                    game:GetService("ReplicatedStorage").AlchemistEvent:FireServer("MixItem", ingredient)
+                end
+                wait(0.01)
+            end
+            
+            game:GetService("ReplicatedStorage").AlchemistEvent:FireServer(unpack(args))
+            wait(0.01)
+        end
+    end
+
+    Rayfield:Notify({
+        Title = "Complete!",
+        Content = "Successfully got wet!",
+        Duration = 5
+    })
+end
+
+-- Create Main Tab
+local MainTab = Window:CreateTab("Potion Brewer", 4483362458)
+
+-- Potion Dropdown
+local PotionDropdown = MainTab:CreateDropdown({
+    Name = "Select Potion",
+    Options = {
+        "Grug", "Nightmare", "Confusion", "Power", "Paralyzing",
+        "Haste", "Invisibility", "Explosion", "Invincible", "Toxic",
+        "Freeze", "Feather", "Speed", "Lethal", "Slow",
+        "Antitoxin", "Corrupted Vine", "Field", "Lost"
+    },
+    CurrentOption = {"Grug"},
+    MultipleOptions = false,
+    Callback = function(Option)
+        SelectedPotion = Option[1]
+    end
+})
+
+-- Amount Input
+local AmountInput = MainTab:CreateInput({
+    Name = "Amount to Brew",
+    PlaceholderText = "Enter amount (1-inf)",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        local num = tonumber(Text)
+        if num and num > 0 and num <= math.huge then
+            BrewAmount = math.floor(num)
+        else
+            Rayfield:Notify({
+                Title = "Invalid Amount",
+                Content = "Please enter a number above 0",
+                Duration = 3
+            })
+        end
+    end
+})
+
+-- Brew Button
+local BrewButton = MainTab:CreateButton({
+    Name = "Brew Selected Potion",
+    Callback = function()
+        BrewPotion(SelectedPotion, BrewAmount)
+    end
+})
+
+MainTab:CreateSection("Ingredient Farm")
+
+-- Spam Ingredients Toggle
+local SpamToggle = MainTab:CreateToggle({
+    Name = "Spam All Ingredients",
+    CurrentValue = false,
+    Flag = "SpamIngredientsToggle",
+    Callback = function(Value)
+        SpamIngredients = Value
+        if Value then
+            Rayfield:Notify({
+                Title = "Ingredient Spam",
+                Content = "Started spamming all ingredients!",
+                Duration = 3
+            })
+            spawn(SpamIngredientsLoop)
+        else
+            Rayfield:Notify({
+                Title = "Ingredient Spam",
+                Content = "Stopped spamming ingredients.",
+                Duration = 3
+            })
+        end
+    end
+})
+
+-- Info Section
+MainTab:CreateSection("Information")
+
+MainTab:CreateParagraph({
+    Title = "How to Use",
+    Content = "1. Equip Alchemist glove first!
+2. Select a potion from dropdown
+3. Choose amount to brew
+4. Click 'Brew Selected Potion'
+5. Use 'Spam All Ingredients' to farm ingredients"
+})
+
+-- Create Auto-Brew Tab
+local AutoBrewTab = Window:CreateTab("Auto Water", 4483362458)
+
+AutoBrewTab:CreateSection("Water in 20 sec or less")
+
+AutoBrewTab:CreateParagraph({
+    Title = "What does this do?",
+    Content = "This will automatically brew every potion and get you wet"
+})
+
+-- Auto-Brew All Button
+local AutoWaterButton = AutoBrewTab:CreateButton({
+    Name = "Get water",
+    Callback = function()
+        AutoWater()
+    end
+})
+
+AutoBrewTab:CreateSection("Potion List")
+
+AutoBrewTab:CreateParagraph({
+    Title = "Potions that will be brewed:",
+    Content = "Grug, Nightmare, Confusion, Power, Paralyzing, Haste, Invisibility, Explosion, Invincible, Toxic, Freeze, Feather, Speed, Lethal, Slow, Antitoxin"
+})
+
+-- Credits Section
+local CreditsTab = Window:CreateTab("Credits", 4483362458)
+
+CreditsTab:CreateParagraph({
+    Title = "Credits",
+    Content = "Original script by @nexer1234.. the get water script is his. It was open source so I just tweaked it so you could get individual potions"
+})
+
+Rayfield:LoadConfiguration()
